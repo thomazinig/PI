@@ -5,13 +5,22 @@ import { Button, Modal, Table } from "react-bootstrap";
 
 import { useEffect, useState } from "react"
 import { AuthToken } from "../../functions/authToken";
+import { useNavigate } from "react-router-dom";
 
 export function LIstarUsuarios() {
     const [usuarios, setUsuarios] = useState(null)
     const [show, setShow] = useState(false);
     const [id, setId] = useState(null);
     const [status, setStatus] = useState(null);
-
+    const navigate = useNavigate()
+    const AuthToken = (token, grup) => {
+      if (!token) {
+        navigate("/")
+      }
+      if (grup !== "Administrador") {
+        navigate("/segundaTela")
+      }
+    }
 
     const handleClose = () => {
         setId(null);
@@ -27,7 +36,7 @@ export function LIstarUsuarios() {
 
 
     useEffect(() => {
-        AuthToken(localStorage.token)
+        AuthToken(localStorage.token,localStorage.grupo)
         userList()
     }, [])
     function userList() {
