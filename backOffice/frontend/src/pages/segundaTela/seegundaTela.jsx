@@ -2,10 +2,13 @@ import Container from 'react-bootstrap/Container';
 import "./segundaTela.css";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 export function SegundaTela() {
   const { innerHeight: altura } = window;
   const [grupoAdm, setGrupoAdm] = useState()
   const navigate = useNavigate()
+
+
   const AuthToken = (token, grup) => {
     if (!token) {
       navigate("/")
@@ -15,7 +18,18 @@ export function SegundaTela() {
     } else {
       setGrupoAdm(true)
     }
+    axios.get("http://localhost:3001/authToken", {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+
+    }).then((res => {
+      console.log(res)
+    })).catch((err => {
+      navigate("/")
+    }))
   }
+
   useEffect(() => {
     AuthToken(localStorage.token, localStorage.grupo)
 
@@ -36,7 +50,7 @@ export function SegundaTela() {
       }}>
         <button className="btnListar">Listar Produtos</button>
         {grupoAdm ?
-          <button onClick={()=>{
+          <button onClick={() => {
             navigate("/listarUsuarios")
           }} className="btnListar mt-4">Listar Usuarios</button>
           :

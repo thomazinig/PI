@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Modal, Table } from "react-bootstrap";
 
 import { useEffect, useState } from "react"
-import { AuthToken } from "../../functions/authToken";
 import { useNavigate } from "react-router-dom";
 
 export function LIstarUsuarios() {
@@ -20,6 +19,16 @@ export function LIstarUsuarios() {
       if (grup !== "Administrador") {
         navigate("/segundaTela")
       }
+      axios.get("http://localhost:3001/authToken", {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+
+    }).then((res => {
+      console.log(res)
+    })).catch((err => {
+      navigate("/")
+    }))
     }
 
     const handleClose = () => {

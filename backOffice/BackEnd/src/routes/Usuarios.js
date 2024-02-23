@@ -20,7 +20,13 @@ function checkToken(req, res, next) {
     res.status(400).json({ msg: "O Token é inválido!" });
   }
 }
-
+router.get("/authToken", checkToken ,async (req,res)=>{
+  const tokenValidado = true 
+  try{
+res.json(tokenValidado)
+  }catch(err){
+  }
+})
 router.get("/auth/usuarios", async (req, res) => {
   const listaUsuarios = await Usuarios.findAll();
   res.json(listaUsuarios);
