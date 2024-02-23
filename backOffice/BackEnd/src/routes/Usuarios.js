@@ -21,7 +21,7 @@ function checkToken(req, res, next) {
   }
 }
 
-router.get("/auth/usuarios", checkToken, async (req, res) => {
+router.get("/auth/usuarios", async (req, res) => {
   const listaUsuarios = await Usuarios.findAll();
   res.json(listaUsuarios);
 });
@@ -74,13 +74,13 @@ router.post("/login", async (req, res) => {
       { expiresIn: 600 }
     );
 
-    res.status(200).json({ msg: "Autenticação realizada com sucesso!", token });
+    res.status(200).json({ msg: "Autenticação realizada com sucesso!", token,user });
   } catch (error) {
     res.status(500).json({ msg: "error", error });
   }
 });
 
-router.put("/edit/:id", async (req, res,next) => {
+router.put("/edit/:id", async (req, res, next) => {
   const { id } = req.params;
   const { nome, cpf, senha } = req.body;
   const salt = await bcrypt.genSalt(12);
@@ -90,12 +90,27 @@ router.put("/edit/:id", async (req, res,next) => {
     if (!usuario) {
       return res.status(404).json({ msg: "Usuário não encontrado!" });
     }
-    await Usuarios.update({ nome, cpf, senha: passwordHash });
+    await usuario.update({ nome, cpf, senha: passwordHash });
     res.status(200).json({ message: "Cliente editado." });
   } catch (err) {
     console.error(err);
     next(err);
   }
 });
+router.put("/edit/status/:id", async (req, res,next) => {
+  const { id } = req.params;
+  const { status } = req.body;;
+
+  try {
+    const usuario = await Usuarios.findOne({ where: { id } })
+    await usuario.update({status})
+    res.status(200).json({ message: "Status editado." });
+
+  } catch {
+    console.error(err);
+    next(err);
+
+  }
+})
 
 module.exports = router;

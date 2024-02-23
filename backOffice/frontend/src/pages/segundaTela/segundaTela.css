@@ -1,0 +1,13 @@
+.btnListar{
+    width: 200px;
+    background-color: rgb(255, 255, 255);
+    border: 0px;
+    border-radius: 7px;
+    transition: 0.3s;
+}
+
+.btnListar:hover{
+    -moz-transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+}
