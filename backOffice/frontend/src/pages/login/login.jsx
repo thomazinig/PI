@@ -10,16 +10,30 @@ export function Login() {
   const { innerHeight: altura } = window;
   const [email, setemail] = useState();
   const [senha, setSenha] = useState();
+
   const navigate = useNavigate()
   useEffect(() => {
     if (localStorage.token) {
       authToken(localStorage.token)
+      console.log("teste")
     }
   }, [])
   function authToken(token) {
     if (token) {
-      console.log("test")
-      navigate("/segundaTela")
+      axios.get("http://localhost:3001/authToken", {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+
+      }).then((res => {
+        console.log(res)
+        navigate("/segundaTela")
+      })).catch((err => {
+        console.log(err)
+        console.log("token invalido")
+
+      }))
+
     }
   }
   function handleChange(event) {
@@ -34,13 +48,19 @@ export function Login() {
     axios
       .post("http://localhost:3001/login", data)
       .then((res) => {
-        console.log(res.data.user.grupo);
+        console.log(res.data.grupUser);
         localStorage.token = res.data.token
-        localStorage.grupo = res.data.user.grupo
-        navigate("/segundaTela")
+
+        navigate("/segundaTela", {
+          state: {
+            id: res.data.idUser,
+            grupo: res.data.grupUser
+          }
+        })
       })
       .catch((err) => {
         console.log(err);
+        window.alert(err.response.data.message);
       });
   }
 

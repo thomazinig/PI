@@ -8,7 +8,7 @@ function checkToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
-  if (!token) return res.status(401).json({ msg: "Acesso negado!" });
+  if (!token) return res.status(401).json({ message: "Acesso negado!" });
 
   try {
     const secret = process.env.SECRET;
@@ -17,14 +17,15 @@ function checkToken(req, res, next) {
 
     next();
   } catch (err) {
-    res.status(400).json({ msg: "O Token é inválido!" });
+    res.status(400).json({ message: "O Token é inválido!" });
   }
 }
 router.get("/authToken", checkToken ,async (req,res)=>{
-  const tokenValidado = true 
   try{
-res.json(tokenValidado)
+res.json({message:"token valido"})
   }catch(err){
+    return res.status(400).json({ message: "token invalido" });
+
   }
 })
 router.get("/auth/usuarios", async (req, res) => {
@@ -60,14 +61,14 @@ router.post("/login", async (req, res) => {
 
   const user = await Usuarios.findOne({ where: { email: email } });
   if (!user) {
-    return res.status(404).json({ msg: "Usuário não encontrado!" });
+    return res.status(400).json({ message: "Email ou senha invalidos" });
   }
   if (!user.status) {
-    return res.status(404).json({ msg: "Usuario desativado" });
+    return res.status(401).json({ message: "Usuario desativado" });
   }
   const checkPassword = await bcrypt.compare(senha, user.senha);
   if (!checkPassword) {
-    return res.status(422).json({ msg: "Senha inválida" });
+    return res.status(400).json({ message: "Email ou senha invalidos" });
   }
   try {
     const secret = process.env.SECRET;
@@ -79,10 +80,11 @@ router.post("/login", async (req, res) => {
       secret,
       { expiresIn: 600 }
     );
-
-    res.status(200).json({ msg: "Autenticação realizada com sucesso!", token,user });
+      const idUser = user.id
+      const grupUser = user.grupo
+    res.status(200).json({ message: "Autenticação realizada com sucesso!", token,idUser,grupUser });
   } catch (error) {
-    res.status(500).json({ msg: "error", error });
+    res.status(500).json({ message: "error", error });
   }
 });
 
@@ -94,7 +96,7 @@ router.put("/edit/:id", async (req, res, next) => {
   try {
     const usuario = await Usuarios.findOne({ where: { id } });
     if (!usuario) {
-      return res.status(404).json({ msg: "Usuário não encontrado!" });
+      return res.status(404).json({ message: "Usuário não encontrado!" });
     }
     await usuario.update({ nome, cpf, senha: passwordHash });
     res.status(200).json({ message: "Cliente editado." });

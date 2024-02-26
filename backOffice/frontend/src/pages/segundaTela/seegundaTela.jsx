@@ -3,11 +3,15 @@ import "./segundaTela.css";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 export function SegundaTela() {
   const { innerHeight: altura } = window;
   const [grupoAdm, setGrupoAdm] = useState()
   const navigate = useNavigate()
 
+const location = useLocation();
+const id = location.state.id
+const grupo = location.state.grupo
 
   const AuthToken = (token, grup) => {
     if (!token) {
@@ -31,7 +35,7 @@ export function SegundaTela() {
   }
 
   useEffect(() => {
-    AuthToken(localStorage.token, localStorage.grupo)
+    AuthToken(localStorage.token, grupo)
 
   }, [])
 
