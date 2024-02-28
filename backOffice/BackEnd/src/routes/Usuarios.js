@@ -43,16 +43,17 @@ router.post("/usuarios", async (req, res) => {
     // Dentro de 'novo' estará o o objeto criado
     const novo = await Usuarios.create({
       nome,
-      cpf,
       email,
-      senha: passwordHash,
+      cpf,
       grupo,
       status,
+      senha: passwordHash,
+
     });
 
     res.status(201).json(novo);
-  } catch (err) {
-    console.error(err);
+  } catch(err) {
+    res.status(400).json(err)
   }
 });
 

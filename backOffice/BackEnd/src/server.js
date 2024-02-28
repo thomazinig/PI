@@ -1,6 +1,8 @@
 const cors = require("cors");
 require("dotenv").config();
 const express = require("express");
+const rotasUsuarios = require("./routes/Usuarios");
+
 
 const app = express();
 app.use(express.json()); 
@@ -10,7 +12,6 @@ app.use(cors());
 const { connection, authenticate } = require("./database/db");
 authenticate(connection); 
 
-const rotasUsuarios = require("./routes/Usuarios");
 app.use(rotasUsuarios)
 
 
