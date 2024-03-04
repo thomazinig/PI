@@ -2,17 +2,18 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./login.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Alert } from "bootstrap";
 import { useNavigate } from "react-router-dom";
-import { LIstarUsuarios } from "../listarUsuarios/listarUsuarios";
-import { SegundaTela } from "../segundaTela/seegundaTela";
+import { useUser } from "../userId";
 export function Login() {
   const { innerHeight: altura } = window;
   const [email, setemail] = useState();
   const [senha, setSenha] = useState();
+  const { setUserData } = useUser(); // Acesso ao contexto
 
   const navigate = useNavigate()
   useEffect(() => {
+    localStorage.clear();
+
     if (localStorage.token) {
       authToken(localStorage.token)
       console.log("teste")
@@ -48,9 +49,10 @@ export function Login() {
     axios
       .post("http://localhost:3001/login", data)
       .then((res) => {
+        const { idUser, grupUser } = res.data;
         console.log(res.data.grupUser);
         localStorage.token = res.data.token
-
+        setUserData({ idUser,grupUser });
         navigate("/segundaTela", {
           state: {
             id: res.data.idUser,

@@ -2,33 +2,47 @@ import axios from "axios"
 import "./listarUsuarios.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Modal, Table } from "react-bootstrap";
-
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
-
+import { useUser } from "../userId";
 export function LIstarUsuarios() {
-    const [usuarios, setUsuarios] = useState(null)
+    const { userData } = useUser();
+    const { idUser, grupUser } = userData;
+    const [usuarios, setUsuarios] = useState(null);
+    const [pesquisar, setPesquisar] = useState("");
     const [show, setShow] = useState(false);
+    console.log("teste")
     const [id, setId] = useState(null);
     const [status, setStatus] = useState(null);
-    const navigate = useNavigate()
-    const AuthToken = (token, grup) => {
-      if (!token) {
-        navigate("/")
-      }
-      if (grup !== "Administrador") {
-        navigate("/segundaTela")
-      }
-      axios.get("http://localhost:3001/authToken", {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
+    const navigate = useNavigate();
 
-    }).then((res => {
-      console.log(res)
-    })).catch((err => {
-      navigate("/")
-    }))
+    const authGrupo = () => {
+        if (!idUser) {
+
+            navigate("/")
+
+        } else {
+
+        }
+    }
+
+    const AuthToken = (token, grup) => {
+        if (!token) {
+            navigate("/")
+        }
+        if (grup !== "Administrador") {
+            navigate("/segundaTela")
+        }
+        axios.get("http://localhost:3001/authToken", {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+
+        }).then((res => {
+            console.log(res)
+        })).catch((err => {
+            navigate("/")
+        }))
     }
 
     const handleClose = () => {
@@ -37,7 +51,7 @@ export function LIstarUsuarios() {
         setShow(false)
     };
 
-    const handleShow = (id,status) => {
+    const handleShow = (id, status) => {
         setId(id);
         setStatus(status)
         setShow(true)
@@ -45,7 +59,8 @@ export function LIstarUsuarios() {
 
 
     useEffect(() => {
-        AuthToken(localStorage.token,localStorage.grupo)
+        authGrupo()
+        AuthToken(localStorage.token, grupUser)
         userList()
     }, [])
     function userList() {
@@ -69,14 +84,19 @@ export function LIstarUsuarios() {
             console.log(err)
         })
         handleClose();
+        
     }
-
+    const lowerCaseUsuarios = pesquisar.toLowerCase()
+    const pesquisarPorNome = usuarios?.filter((usuario=> usuario.nome.toLowerCase().includes(lowerCaseUsuarios)))
     return (
         <div className="container">
             <div style={{ display: "flex", justifyContent: "space-between", margin: "30px 0" }}>
                 <h1>Usuarios</h1>
-                <button className="btn btn-primary">adicionar usuario</button>
+                <button className="btn btn-primary" onClick={()=> navigate("/cadastrarUsuario")}>adicionar usuario</button>
             </div>
+            <input className="form-control mb-3" type="text"  placeholder="Pesquise pelo nome" value={pesquisar} 
+            onChange={(e)=>setPesquisar(e.target.value)} />
+
             {
                 usuarios === null ?
                     <h1>carregando</h1>
@@ -92,20 +112,20 @@ export function LIstarUsuarios() {
                             </tr>
                         </thead>
                         <tbody>
-                            {usuarios.map(usuario => {
-
+                            {pesquisarPorNome.map(usuario => {
+                                console.log(usuario)
                                 return (
                                     <tr key={usuario.id}>
                                         <td>{usuario.nome}</td>
                                         <td>{usuario.email}</td>
                                         <td>{usuario.grupo}</td>
                                         <td>{usuario.status === false ?
-                                            <button onClick={() => handleShow(usuario.id,usuario.status)} className="btnAtivoInativo">
+                                            <button onClick={() => handleShow(usuario.id, usuario.status)} className="btnAtivoInativo">
                                                 <p>Inativo</p>
                                                 <div className="btnInativo"></div>
                                             </button>
                                             :
-                                            <button onClick={() => handleShow(usuario.id,usuario.status)} className="btnAtivoInativo">
+                                            <button onClick={() => handleShow(usuario.id, usuario.status)} className="btnAtivoInativo">
                                                 <p>Ativo</p>
                                                 <div className="btnAtivo"></div>
                                             </button>
@@ -130,9 +150,9 @@ export function LIstarUsuarios() {
                     <Button variant="danger" onClick={handleClose}>
                         Cancelar
                     </Button>
-                    <Button variant="primary" onClick={()=>alterarStatus(id, status)}>
+                    <Button variant="primary" onClick={() => alterarStatus(id, status)}>
                         editar status
-                        </Button>
+                    </Button>
                 </Modal.Footer>
             </Modal>
 

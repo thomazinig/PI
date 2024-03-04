@@ -52,7 +52,7 @@ export function CadastrarUsuario() {
                     <label htmlFor="grupo" className="form-label">Grupo</label>
                     <select className="form-select" aria-label="Default select example" id="grupo"{...register("grupo", { required: true })}>
                         <option value=""></option>
-                        <option value=">Administrador">Administrador</option>
+                        <option value="Administrador">Administrador</option>
                         <option value="Estoque">Estoque</option>
                     </select>
                 </div>

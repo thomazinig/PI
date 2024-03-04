@@ -3,15 +3,14 @@ import "./segundaTela.css";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useUser } from '../userId';
+
 export function SegundaTela() {
+  const { userData } = useUser();
+  const { idUser, grupUser } = userData;
   const { innerHeight: altura } = window;
   const [grupoAdm, setGrupoAdm] = useState()
   const navigate = useNavigate()
-
-const location = useLocation();
-const id = location.state.id
-const grupo = location.state.grupo
 
   const AuthToken = (token, grup) => {
     if (!token) {
@@ -35,7 +34,7 @@ const grupo = location.state.grupo
   }
 
   useEffect(() => {
-    AuthToken(localStorage.token, grupo)
+    AuthToken(localStorage.token,grupUser)
 
   }, [])
 
@@ -55,7 +54,9 @@ const grupo = location.state.grupo
         <button className="btnListar">Listar Produtos</button>
         {grupoAdm ?
           <button onClick={() => {
-            navigate("/listarUsuarios")
+            navigate("/listarUsuarios", {
+
+            })
           }} className="btnListar mt-4">Listar Usuarios</button>
           :
           ""
