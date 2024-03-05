@@ -34,13 +34,27 @@ router.get("/auth/usuarios", async (req, res) => {
 });
 
 router.post("/usuarios", async (req, res) => {
-  // Coletar os dados do req.body
 
   const { nome, cpf, email, senha, grupo, status } = req.body;
   const salt = await bcrypt.genSalt(12);
   const passwordHash = await bcrypt.hash(senha, salt);
+  const validarEmail = await Usuarios.findOne({where: { email: email }})
+  const validarCpf = await Usuarios.findOne({where: { cpf: cpf }})
+
+  if(validarCpf && validarEmail){
+    console.log(validarCpf)
+    return res.status(400).json({menssage: "cpf e email já cadastrado"})
+  }
+  if(validarCpf){
+    console.log(validarCpf)
+    return res.status(400).json({menssage: "cpf já cadastrado"})
+  }
+if(validarEmail){
+  return res.status(400).json({menssage: "Email já cadastrado"})
+}
+
+
   try {
-    // Dentro de 'novo' estará o o objeto criado
     const novo = await Usuarios.create({
       nome,
       email,

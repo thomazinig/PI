@@ -1,5 +1,6 @@
 import axios from "axios"
 import { Alert } from "bootstrap"
+import { useEffect } from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
 
 export function CadastrarUsuario() {
@@ -12,16 +13,16 @@ export function CadastrarUsuario() {
     } = useForm()
 
     const onSubmit = (data) => {
-        console.log(data)
 
         if (data === undefined) {
             console.log(data)
             return "dados invalidos"
         }
+        delete data.confirmar_senha
         axios.post("http://localhost:3001/usuarios", data).then((res) => {
             console.log(res, "teste");
         }).catch((err) => {
-            console.log(err,"asda")
+            alert(err.response.data.menssage)
         })
 
     }
@@ -55,6 +56,8 @@ export function CadastrarUsuario() {
                         <option value="Administrador">Administrador</option>
                         <option value="Estoque">Estoque</option>
                     </select>
+                    {errors.grupo && <span>Grupo obrigatorio</span>}
+
                 </div>
                 <div className="mb-3">
 
@@ -70,7 +73,7 @@ export function CadastrarUsuario() {
                     {errors.senha && <span>senha obrigatorio</span>}
 
                 </div>
-                {/* <div className="mb-3">
+                <div className="mb-3">
                     <label htmlFor="exampleInputPassword1" className="form-label">Confirmar senha</label>
                     <input className="form-control" type="password"
                         {...register("confirmar_senha", {
@@ -82,8 +85,9 @@ export function CadastrarUsuario() {
                             },
                         })}
                     />
+                    {errors.confirmar_senha && <span>senhas diferentes</span>}
 
-                </div> */}
+                </div>
                 <button type="submit" className="btn btn-primary">Cadastrar</button>
             </form>
         </div>
