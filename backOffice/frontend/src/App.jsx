@@ -4,6 +4,7 @@ import { SegundaTela } from "./pages/segundaTela/seegundaTela";
 import { LIstarUsuarios } from "./pages/listarUsuarios/listarUsuarios";
 import { CadastrarUsuario } from "./pages/cadastarUsuarios/cadastrarUsuario";
 import { UserProvider } from "./pages/userId";
+import { EditarCadastro } from "./pages/editarCadastro/editarCadastro";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/segundaTela" element={<SegundaTela/>}/>
       <Route path="/listarUsuarios" element={<LIstarUsuarios/>}/>
       <Route path="/cadastrarUsuario" element={<CadastrarUsuario/>}/>
+      <Route path="/editar/:id" element={<EditarCadastro/>}/>
     </Routes>
     </BrowserRouter>
     </UserProvider>

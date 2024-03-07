@@ -20,10 +20,10 @@ function checkToken(req, res, next) {
     res.status(400).json({ message: "O Token é inválido!" });
   }
 }
-router.get("/authToken", checkToken ,async (req,res)=>{
-  try{
-res.json({message:"token valido"})
-  }catch(err){
+router.get("/authToken", checkToken, async (req, res) => {
+  try {
+    res.json({ message: "token valido" })
+  } catch (err) {
     return res.status(400).json({ message: "token invalido" });
 
   }
@@ -32,26 +32,36 @@ router.get("/auth/usuarios", async (req, res) => {
   const listaUsuarios = await Usuarios.findAll();
   res.json(listaUsuarios);
 });
+router.get("/usuario/:id", async (req, res) => {
+  const { id } = req.params;
+  const usuario = await Usuarios.findOne({ where: { id } });
+  if (!usuario) {
+    return res.status(404).json({ message: "Usuário não encontrado!" });
+  }
+  res.json(usuario)
+
+
+});
 
 router.post("/usuarios", async (req, res) => {
 
   const { nome, cpf, email, senha, grupo, status } = req.body;
   const salt = await bcrypt.genSalt(12);
   const passwordHash = await bcrypt.hash(senha, salt);
-  const validarEmail = await Usuarios.findOne({where: { email: email }})
-  const validarCpf = await Usuarios.findOne({where: { cpf: cpf }})
+  const validarEmail = await Usuarios.findOne({ where: { email: email } })
+  const validarCpf = await Usuarios.findOne({ where: { cpf: cpf } })
 
-  if(validarCpf && validarEmail){
+  if (validarCpf && validarEmail) {
     console.log(validarCpf)
-    return res.status(400).json({menssage: "cpf e email já cadastrado"})
+    return res.status(400).json({ menssage: "cpf e email já cadastrado" })
   }
-  if(validarCpf){
+  if (validarCpf) {
     console.log(validarCpf)
-    return res.status(400).json({menssage: "cpf já cadastrado"})
+    return res.status(400).json({ menssage: "cpf já cadastrado" })
   }
-if(validarEmail){
-  return res.status(400).json({menssage: "Email já cadastrado"})
-}
+  if (validarEmail) {
+    return res.status(400).json({ menssage: "Email já cadastrado" })
+  }
 
 
   try {
@@ -66,7 +76,7 @@ if(validarEmail){
     });
 
     res.status(201).json(novo);
-  } catch(err) {
+  } catch (err) {
     res.status(400).json(err)
   }
 });
@@ -93,11 +103,11 @@ router.post("/login", async (req, res) => {
         id: user.id,
       },
       secret,
-      { expiresIn: 600 }
+      { expiresIn: 6000 }
     );
-      const idUser = user.id
-      const grupUser = user.grupo
-    res.status(200).json({ message: "Autenticação realizada com sucesso!", token,idUser,grupUser });
+    const idUser = user.id
+    const grupUser = user.grupo
+    res.status(200).json({ message: "Autenticação realizada com sucesso!", token, idUser, grupUser });
   } catch (error) {
     res.status(500).json({ message: "error", error });
   }
@@ -105,28 +115,35 @@ router.post("/login", async (req, res) => {
 
 router.put("/edit/:id", async (req, res, next) => {
   const { id } = req.params;
-  const { nome, cpf, senha } = req.body;
+  const { nome, cpf, grupo, senha } = req.body;
+  const usuario = await Usuarios.findOne({ where: { id } });
+
+  const checkPassword = await bcrypt.compare(senha, usuario.senha);
+  if (checkPassword) {
+    return res.status(404).json({ message: "Erro ao alterar senha" });
+  }
   const salt = await bcrypt.genSalt(12);
   const passwordHash = await bcrypt.hash(senha, salt);
   try {
-    const usuario = await Usuarios.findOne({ where: { id } });
+
     if (!usuario) {
       return res.status(404).json({ message: "Usuário não encontrado!" });
     }
-    await usuario.update({ nome, cpf, senha: passwordHash });
+    await usuario.update({ nome, cpf, grupo, senha: passwordHash });
     res.status(200).json({ message: "Cliente editado." });
   } catch (err) {
     console.error(err);
     next(err);
   }
 });
-router.put("/edit/status/:id", async (req, res,next) => {
+router.put("/edit/status/:id", async (req, res, next) => {
   const { id } = req.params;
   const { status } = req.body;;
 
   try {
+
     const usuario = await Usuarios.findOne({ where: { id } })
-    await usuario.update({status})
+    await usuario.update({ status })
     res.status(200).json({ message: "Status editado." });
 
   } catch {

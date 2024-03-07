@@ -1,4 +1,3 @@
-import Container from 'react-bootstrap/Container';
 import "./segundaTela.css";
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -39,11 +38,12 @@ export function SegundaTela() {
   }, [])
 
   return (
-    <Container style={{
+    <div style={{
       height: `${altura}px`,
       display: "flex",
       alignItems: "center",
-      justifyContent: "center"
+      justifyContent: "center",
+      backgroundColor: "#480ca8"
     }}>
       <div style={{
         display: "flex",
@@ -54,15 +54,13 @@ export function SegundaTela() {
         <button className="btnListar">Listar Produtos</button>
         {grupoAdm ?
           <button onClick={() => {
-            navigate("/listarUsuarios", {
-
-            })
+            navigate("/listarUsuarios")
           }} className="btnListar mt-4">Listar Usuarios</button>
           :
           ""
         }
       </div>
-    </Container>
+    </div>
 
   )
 

@@ -67,13 +67,11 @@ export function Login() {
   }
 
   return (
-    <div style={{
+    <div className="telaLogin" style={{
       height: `${altura}px`,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center"
     }}>
       <div className="campoLogin">
+      <h1><b>ENTRAR</b></h1>
         <div>
           <label htmlFor="" className="labelLogin">E-mail</label>
           <br />
@@ -85,7 +83,7 @@ export function Login() {
 
           <input className="form-control larguraInputBtn" type="password" value={senha} onChange={handleChangeSenha} />
         </div>
-        <input style={{ width: "350px" }} className="btn btn-primary mt-4" onClick={login1} type="submit" value="Entar" />
+        <input style={{ width: "350px" }} className="btnLogin mt-5" onClick={login1} type="submit" value="Entar" />
       </div>
 
     </div>

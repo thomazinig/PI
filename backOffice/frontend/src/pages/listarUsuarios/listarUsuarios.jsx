@@ -6,12 +6,13 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../userId";
 export function LIstarUsuarios() {
+    const { innerHeight: altura } = window;
+
     const { userData } = useUser();
     const { idUser, grupUser } = userData;
     const [usuarios, setUsuarios] = useState(null);
     const [pesquisar, setPesquisar] = useState("");
     const [show, setShow] = useState(false);
-    console.log("teste")
     const [id, setId] = useState(null);
     const [status, setStatus] = useState(null);
     const navigate = useNavigate();
@@ -39,7 +40,6 @@ export function LIstarUsuarios() {
             }
 
         }).then((res => {
-            console.log(res)
         })).catch((err => {
             navigate("/")
         }))
@@ -71,9 +71,7 @@ export function LIstarUsuarios() {
         })
     }
     function alterarStatus(id, mudarStatus) {
-        console.log(mudarStatus)
         let status = !mudarStatus
-        console.log(status)
 
         const boolean = { status }
 
@@ -84,78 +82,80 @@ export function LIstarUsuarios() {
             console.log(err)
         })
         handleClose();
-        
+
     }
     const lowerCaseUsuarios = pesquisar.toLowerCase()
-    const pesquisarPorNome = usuarios?.filter((usuario=> usuario.nome.toLowerCase().includes(lowerCaseUsuarios)))
+    const pesquisarPorNome = usuarios?.filter((usuario => usuario.nome.toLowerCase().includes(lowerCaseUsuarios)))
     return (
-        <div className="container">
-            <div style={{ display: "flex", justifyContent: "space-between", margin: "30px 0" }}>
-                <h1>Usuarios</h1>
-                <button className="btn btn-primary" onClick={()=> navigate("/cadastrarUsuario")}>adicionar usuario</button>
+        <div className=" listarUsuarios">
+            <div className="container">
+                <div style={{ display: "flex", justifyContent: "space-between", margin: "30px 0" }}>
+                    <h1>Usuarios</h1>
+                    <button className="btnCriarUsuario" onClick={() => navigate("/cadastrarUsuario")}>adicionar usuario</button>
+                </div>
+                <input className="form-control mb-3" type="text" placeholder="Pesquise pelo nome" value={pesquisar}
+                    onChange={(e) => setPesquisar(e.target.value)} />
+
+                {
+                    usuarios === null ?
+                        <h1>carregando</h1>
+                        :
+                        <Table bsPrefix="table table-bordered table-striped table-hover align-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th>Grupo</th>
+                                    <th>Status</th>
+                                    <th>Editar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {pesquisarPorNome.map(usuario => {
+                                    return (
+                                        <tr key={usuario.id}>
+                                            <td>{usuario.nome}</td>
+                                            <td>{usuario.email}</td>
+                                            <td>{usuario.grupo}</td>
+                                            <td>{usuario.status === false ?
+                                                <button onClick={() => handleShow(usuario.id, usuario.status)} className="btnAtivoInativo">
+                                                    <p>Inativo</p>
+                                                    <div className="btnInativo"></div>
+                                                </button>
+                                                :
+                                                <button onClick={() => handleShow(usuario.id, usuario.status)} className="btnAtivoInativo">
+                                                    <p>Ativo</p>
+                                                    <div className="btnAtivo"></div>
+                                                </button>
+
+                                            }
+                                            </td>
+                                            <td>
+                                                <button className="btn" onClick={() => {
+                                                    navigate(`/editar/${usuario.id}`)
+                                                }}>Editar</button>
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </Table>
+                }
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirmação</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>Tem certeza que deseja editar o status?</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="danger" onClick={handleClose}>
+                            Cancelar
+                        </Button>
+                        <Button variant="primary" onClick={() => alterarStatus(id, status)}>
+                            editar status
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
-            <input className="form-control mb-3" type="text"  placeholder="Pesquise pelo nome" value={pesquisar} 
-            onChange={(e)=>setPesquisar(e.target.value)} />
-
-            {
-                usuarios === null ?
-                    <h1>carregando</h1>
-                    :
-                    <Table bsPrefix="table table-bordered table-striped table-hover align-middle text-center">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>E-mail</th>
-                                <th>Grupo</th>
-                                <th>Status</th>
-                                <th>Editar</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {pesquisarPorNome.map(usuario => {
-                                console.log(usuario)
-                                return (
-                                    <tr key={usuario.id}>
-                                        <td>{usuario.nome}</td>
-                                        <td>{usuario.email}</td>
-                                        <td>{usuario.grupo}</td>
-                                        <td>{usuario.status === false ?
-                                            <button onClick={() => handleShow(usuario.id, usuario.status)} className="btnAtivoInativo">
-                                                <p>Inativo</p>
-                                                <div className="btnInativo"></div>
-                                            </button>
-                                            :
-                                            <button onClick={() => handleShow(usuario.id, usuario.status)} className="btnAtivoInativo">
-                                                <p>Ativo</p>
-                                                <div className="btnAtivo"></div>
-                                            </button>
-
-                                        }
-                                        </td>
-                                        <td>
-                                            <button className="btn">Editar</button>
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </Table>
-            }
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirmação</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>Tem certeza que deseja editar o status?</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="danger" onClick={handleClose}>
-                        Cancelar
-                    </Button>
-                    <Button variant="primary" onClick={() => alterarStatus(id, status)}>
-                        editar status
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-
         </div>
     )
 }
