@@ -1,0 +1,55 @@
+.image-upload-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  form {
+    margin-bottom: 20px;
+  }
+  
+  .file{
+    display: none;
+  }
+  .file-label{
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border: 2px solid gray;
+    border-radius: 5px;
+
+  }
+  .label-button{
+    background-color: rgba(233, 233, 233, 0.801);
+    padding: 7px 10px;
+    border-left: 1px solid gray;
+  }
+  .image-container {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .image-container img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 5px;
+  }
+  
+  .image-container button {
+    display: block;
+    width: 100px;
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .image-container button:hover {
+    background-color: #d32f2f;
+  }
+  

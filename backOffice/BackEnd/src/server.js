@@ -2,6 +2,8 @@ const cors = require("cors");
 require("dotenv").config();
 const express = require("express");
 const rotasUsuarios = require("./routes/Usuarios");
+const rotasProdutos = require("./routes/Produtos")
+const rotasImagemProdutos = require("./routes/Produtos")
 
 
 const app = express();
@@ -13,6 +15,8 @@ const { connection, authenticate } = require("./database/db");
 authenticate(connection); 
 
 app.use(rotasUsuarios)
+app.use(rotasProdutos)
+app.use(rotasImagemProdutos)
 
 
 try {

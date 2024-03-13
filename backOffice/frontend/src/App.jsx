@@ -5,6 +5,7 @@ import { LIstarUsuarios } from "./pages/listarUsuarios/listarUsuarios";
 import { CadastrarUsuario } from "./pages/cadastarUsuarios/cadastrarUsuario";
 import { UserProvider } from "./pages/userId";
 import { EditarCadastro } from "./pages/editarCadastro/editarCadastro";
+import { SalvarImagem } from "./pages/salvarImagem/salvarImagem";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route path="/listarUsuarios" element={<LIstarUsuarios/>}/>
       <Route path="/cadastrarUsuario" element={<CadastrarUsuario/>}/>
       <Route path="/editar/:id" element={<EditarCadastro/>}/>
+      <Route path="/salvarImagem" element={<SalvarImagem/>}/>
     </Routes>
     </BrowserRouter>
     </UserProvider>
