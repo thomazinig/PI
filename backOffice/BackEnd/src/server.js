@@ -1,5 +1,6 @@
 const cors = require("cors");
 require("dotenv").config();
+const path = require('path');
 const express = require("express");
 const rotasUsuarios = require("./routes/Usuarios");
 const rotasProdutos = require("./routes/Produtos")
@@ -13,6 +14,9 @@ app.use(cors());
 
 const { connection, authenticate } = require("./database/db");
 authenticate(connection); 
+const diretorioImagens = path.join(__dirname,'routes', 'public');
+
+app.use('/images', express.static(diretorioImagens));
 
 app.use(rotasUsuarios)
 app.use(rotasProdutos)

@@ -1,0 +1,37 @@
+.div-imgs{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+
+.div-imagens-excluir{
+display: flex;
+flex-direction: column;
+gap: 7px;
+}
+.div-imagens-excluir img{
+    width: 100px;
+    height: 100px;
+}
+.div-botoes{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.div-imagens-excluir button {
+    display: block;
+    width: 100px;
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .div-imagens-excluir button:hover {
+    background-color: #d32f2f;
+  }

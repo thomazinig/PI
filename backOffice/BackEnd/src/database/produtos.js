@@ -11,7 +11,7 @@ const Produtos = connection.define("produto", {
     allowNull:false,
   },
   descricao: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(2000),
     allowNull: false,
   },
   preco: {
@@ -20,6 +20,10 @@ const Produtos = connection.define("produto", {
   },
   estoque: {
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  status:{
+    type: DataTypes.BOOLEAN,
     allowNull: false,
   }
 });

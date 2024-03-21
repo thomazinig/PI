@@ -10,7 +10,6 @@
     width: 50%;
 }
 .divBtnCadastrar{
-    width: 100%;
     display: flex;
     justify-content: end;
 }

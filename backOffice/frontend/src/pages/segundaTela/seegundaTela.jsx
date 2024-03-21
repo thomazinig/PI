@@ -51,7 +51,9 @@ export function SegundaTela() {
         alignItems: "center",
         justifyContent: "center"
       }}>
-        <button className="btnListar">Listar Produtos</button>
+        <button onClick={() => {
+            navigate("/listarProduto")
+          }} className="btnListar">Listar Produtos</button>
         {grupoAdm ?
           <button onClick={() => {
             navigate("/listarUsuarios")
