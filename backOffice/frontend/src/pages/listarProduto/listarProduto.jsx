@@ -166,7 +166,13 @@ console.log(produto)
                   <td>
                     <button
                       className="btn"
-                      onClick={() => navigate(`/visualizarProduto/${produtoInd.id}`)}
+                      onClick={() => {
+                        if (grupUser === "Administrador") {
+                            navigate(`/visualizarProduto/${produtoInd.id}`)
+                        } else {
+                          alert("Usuario sem permissão")
+                        }
+                      }}
                     >
                       Visualizar
                     </button>

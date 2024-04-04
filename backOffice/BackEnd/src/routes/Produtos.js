@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const ImagemProduto = require("../database/imagemProdutos");
 const Produtos = require("../database/produtos");
+const { Sequelize } = require("sequelize");
 
 const router = Router();
 
@@ -21,17 +22,81 @@ router.get('/download/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        const imagensProduto = await ImagemProduto.findAll({
-            where: { produtoId: id },
+        // Encontra todas as imagens que não são marcadas como principal
+        const imagensNaoPrincipais = await ImagemProduto.findAll({
+            where: { produtoId: id, principal: false },
             attributes: ['nomeImagem']
         });
 
-        res.status(200).json(imagensProduto);
+        res.status(200).json(imagensNaoPrincipais);
     } catch (error) {
         console.error('Erro ao baixar imagens:', error);
         res.status(500).json({ error: 'Falha ao baixar imagens' });
     }
 });
+
+router.get('/download/principal/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Encontra a imagem marcada como principal
+        const imagemPrincipal = await ImagemProduto.findOne({
+            where: { produtoId: id, principal: true },
+            attributes: ['nomeImagem']
+        });
+
+        if (imagemPrincipal) {
+            res.status(200).json(imagemPrincipal);
+        } else {
+            res.status(404).json({ error: 'Imagem principal não encontrada para o produto fornecido' });
+        }
+    } catch (error) {
+        console.error('Erro ao baixar imagem principal:', error);
+        res.status(500).json({ error: 'Falha ao baixar imagem principal' });
+    }
+});
+
+
+router.get("/listarProdutosImagens", async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1; // Página atual, padrão é 1
+        const limit = parseInt(req.query.limit) || 10; // Número de itens por página, padrão é 10
+
+        const startIndex = (page - 1) * limit; // Índice do primeiro item na página
+        const endIndex = page * limit; // Índice do último item na página
+
+        const totalProducts = await Produtos.count(); // Total de produtos
+
+        const totalPages = Math.ceil(totalProducts / limit); // Total de páginas
+
+        const produtos = await Produtos.findAll({
+            offset: startIndex,
+            limit: limit,
+            order: [['id', 'DESC']],
+            include: [{
+                model: ImagemProduto,
+                attributes: ['nomeImagem'],
+                required: false,
+                order: [['principal', 'DESC'], ['createdAt', 'ASC']], // Ordena pela imagem principal primeiro e depois pela data de criação ascendente
+                limit: 1
+            }]
+        }); // Consulta ao banco de dados
+
+        const result = {
+            totalPages: totalPages,
+            currentPage: page,
+            products: produtos
+        };
+
+        res.json(result); // Retorna os dados com informações de paginação
+    } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
+        res.status(500).json({ error: "Falha ao buscar produtos" });
+    }
+});
+
+
+
 
 
 
@@ -93,7 +158,7 @@ router.post("/novoProduto", async (req, res) => {
 
 
 
-router.post('/upload/:id', (req, res) => {
+router.post('/upload/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -115,21 +180,24 @@ router.post('/upload/:id', (req, res) => {
                 return res.status(500).send(err)
             }
             const fileName = req.file.filename
-            console.log(fileName)
-            const novo = await ImagemProduto.create(
-                {
-                    produtoId: id,
-                    nomeImagem: fileName,
-                }
-            )
-            return res.status(200).send({ msg: "imagem enviada com sucesso" },)
-        })
+            // Verifica se a imagem é marcada como principal
+            const isPrincipal = req.body.principal === 'true';
+            console.log(isPrincipal)
+             ImagemProduto.create({
+                produtoId: id,
+                nomeImagem: fileName,
+                principal: isPrincipal
+            });
+
+            return res.status(200).send({ msg: "imagem enviada com sucesso" });
+        });
 
     } catch (error) {
         console.error('Erro ao enviar imagens:', error);
         res.status(500).json({ error: 'Falha ao enviar imagens' });
     }
 });
+
 router.put("/editar/produto/:id", async (req, res, next) => {
     const { id } = req.params;
     const { nomeProduto, descricao, avaliacao, preco, estoque } = req.body;

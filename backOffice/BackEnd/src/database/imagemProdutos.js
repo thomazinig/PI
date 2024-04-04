@@ -6,6 +6,10 @@ const ImagemProduto = connection.define("imagemProduto", {
   nomeImagem: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  principal: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
   }
 });
 ImagemProduto.belongsTo(Produtos,{

@@ -1,15 +1,15 @@
-import axios from "axios"
-import { useEffect } from "react"
-import { useForm, SubmitHandler } from "react-hook-form"
+import axios from "axios";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useUser } from '../userId';
 import { useNavigate } from "react-router-dom";
-import "./cadastrarUsuario.css"
-
+import { cpf } from 'cpf-cnpj-validator'; // Importa a função de validação de CPF
+import "./cadastrarUsuario.css";
 
 export function CadastrarUsuario() {
     const { innerHeight: altura } = window;
     const { userData } = useUser();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const { idUser, grupUser } = userData;
     const {
@@ -18,57 +18,56 @@ export function CadastrarUsuario() {
         watch,
         formState: { errors },
         reset,
-    } = useForm()
+    } = useForm();
+
     const authGrupo = () => {
         if (!idUser) {
-
-            navigate("/")
-
-        } else {
-
+            navigate("/");
         }
-    }
+    };
 
     const AuthToken = (token, grup) => {
         if (!token) {
-            navigate("/")
+            navigate("/");
         }
         if (grup !== "Administrador") {
-            navigate("/segundaTela")
+            navigate("/segundaTela");
         }
         axios.get("http://localhost:3001/authToken", {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
-
         }).then((res => {
-            console.log(res)
+            console.log(res);
         })).catch((err => {
-            navigate("/")
-        }))
-    }
+            navigate("/");
+        }));
+    };
 
     useEffect(() => {
-        authGrupo()
-        AuthToken(localStorage.token, grupUser)
-    }, [])
-
+        authGrupo();
+        AuthToken(localStorage.token, grupUser);
+    }, []);
 
     const onSubmit = (data) => {
-
         if (data === undefined) {
-            console.log(data)
-            return "dados invalidos"
+            console.log(data);
+            return "dados invalidos";
         }
-        delete data.confirmar_senha
+        delete data.confirmar_senha;
         axios.post("http://localhost:3001/usuarios", data).then((res) => {
-            alert("Usuario Cadastrado")
-            reset()
+            alert("Usuario Cadastrado");
+            reset();
         }).catch((err) => {
-            alert(err.response.data.menssage)
-        })
+            alert(err.response.data.menssage);
+        });
+    };
 
-    }
+    // Função de validação de CPF
+    const validateCPF = (value) => {
+        return cpf.isValid(value) || "CPF inválido";
+    };
+
     return (
         <div className="cadastrarUsuario" style={{
             height: `${altura}px`,
@@ -76,7 +75,7 @@ export function CadastrarUsuario() {
 
             <div className="container cadastrarUsuario-container" >
                 <div className="d-flex flex-column justify-content-center" style={{ width: "50%" }} >
-                    <h1 style={{ textAlign: "center"}}>Cadastrar Usuario</h1>
+                    <h1 style={{ textAlign: "center" }}>Cadastrar Usuario</h1>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="mb-3">
                             <label htmlFor="nome" className="form-label">Nome</label>
@@ -92,9 +91,8 @@ export function CadastrarUsuario() {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="cpf" className="form-label">CPF</label>
-                            <input type="number" className="form-control" id="cpf"{...register("cpf", { required: true })} />
-                            {errors.cpf && <span>cpf obrigatorio</span>}
-
+                            <input type="number" className="form-control" id="cpf" {...register("cpf", { required: true, validate: validateCPF })} />
+                            {errors.cpf && <span>CPF obrigatório e válido</span>}
                         </div>
                         <div className="mb-3">
 
@@ -107,7 +105,7 @@ export function CadastrarUsuario() {
                             {errors.grupo && <span>Grupo obrigatorio</span>}
 
                         </div>
-                        <div className="mb-3">
+                        <div className="mb-3" style={{ display: "none" }}>
 
                             <label htmlFor="status" className="form-label">Status</label>
                             <select className="form-select" aria-label="Default select example" id="status"{...register("status", { required: true })}>
@@ -137,7 +135,7 @@ export function CadastrarUsuario() {
 
                         </div>
                         <div className="divBtnCadastro">
-                        <button type="submit" className="btnCadastro">Cadastrar</button>
+                            <button type="submit" className="btnCadastro">Cadastrar</button>
 
                         </div>
                     </form>

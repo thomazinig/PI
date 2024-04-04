@@ -112,13 +112,21 @@ export function EditarCadastro() {
                                 :
                                 <div>
                                     <label htmlFor="grupo" className="form-label">Grupo</label>
-                                    <select className="form-select" aria-label="Default select example" id="grupo"{...register("grupo", { required: true })}>
-                                        <option value=""></option>
+                                   {dataUser.grupo !== "Estoque"? 
+                                   <select className="form-select" aria-label="Default select example" id="grupo"{...register("grupo", { required: true })}>
                                         <option value="Administrador">Administrador</option>
                                         <option value="Estoque">Estoque</option>
                                     </select>
+                                    :
+                                    <select className="form-select" aria-label="Default select example" id="grupo"{...register("grupo", { required: true })}>
+                                        <option value="Estoque">Estoque</option>
+                                        <option value="Administrador">Administrador</option>
+
+                                    </select>
+                                    }
                                     {errors.grupo && <span>Grupo obrigatorio</span>}
                                 </div>
+                                
                             }
                         </div>
                         <div className="mb-3">

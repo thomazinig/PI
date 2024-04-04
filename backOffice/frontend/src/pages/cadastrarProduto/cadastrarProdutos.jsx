@@ -1,71 +1,86 @@
-import { useForm } from "react-hook-form"
-import axios from "axios"
-import { useEffect, useState } from "react"
-import "./cadastrarProduto.css"
-import "./salvarImagem.css"
-import { Navigate, useNavigate } from "react-router-dom"
+import { useForm } from "react-hook-form";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import "./cadastrarProduto.css";
+import "./salvarImagem.css";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export function CadastrarProduto() {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
 
-    const { innerHeight: altura } = window;
+  const { innerHeight: altura } = window;
 
-    const [images, setImages] = useState([]);
-    const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors },
-        reset,
-    } = useForm()
-    const handleImageChange = (e) => {
-        const newImages = Array.from(e.target.files); // Converte o objeto FileList em um array
-        setImages(prevImages => prevImages.concat(newImages)); // Concatena as novas imagens com as imagens existentes
-    };
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    reset
+  } = useForm();
+  const handleImageChange = (e) => {
+    const newImages = Array.from(e.target.files).map((file) => ({
+      file,
+      principal: false // Define todas as novas imagens como não principais por padrão
+    }));
+    setImages((prevImages) => prevImages.concat(newImages));
+  };
 
-    const handleRemoveImage = (indexToRemove) => {
-        const updatedImages = images.filter((_, index) => index !== indexToRemove); // Filtra todos os itens, exceto o item no índice indexToRemove
-        setImages(updatedImages); // Atualiza o estado com o novo array sem o item removido
-    };
-    const salvarImagem = async (id) => {
-        setLoading(true);
-        console.log(id)
-        try {
-            for (const image of images) {
-                const formData = new FormData();
-                formData.append('file', image); // Adiciona apenas a imagem atual ao FormData
+  const handleRemoveImage = (indexToRemove) => {
+    const updatedImages = images.filter((_, index) => index !== indexToRemove);
+    setImages(updatedImages);
+  };
 
-                const response = await axios.post(`http://localhost:3001/upload/${id}`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-                console.log(response.data);
+  const handleSetPrincipal = (index) => {
+    const updatedImages = images.map((image, i) => ({
+      ...image,
+      principal: i === index // Define a imagem atual como principal e todas as outras como não principais
+    }));
+    setImages(updatedImages);
+  };
+
+  const salvarImagem = async (id) => {
+    setLoading(true);
+    console.log(id);
+    try {
+      for (const { file, principal } of images) {
+        console.log(principal)
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("principal", principal); // Inclui o campo 'principal' no FormData
+        const response = await axios.post(
+          `http://localhost:3001/upload/${id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data"
             }
+          }
+        );
+        console.log(response.data);
+      }
 
-            setImages([]); // Limpa o array de imagens após o envio bem-sucedido
-            setLoading(false);
-        } catch (error) {
-            console.error('Error uploading images:', error);
-            setLoading(false);
-        }
-
-
+      setImages([]);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      setLoading(false);
     }
+  };
 
-    const onSubmit = async (data) => {
-        console.log(data);
-        await axios.post("http://localhost:3001/novoProduto", data).then(async (res) => {
+  const onSubmit = async (data) => {
+    console.log(data);
+    await axios
+      .post("http://localhost:3001/novoProduto", data)
+      .then(async (res) => {
+        await salvarImagem(res.data.id);
 
-            await salvarImagem(res.data.id)
-
-            navigate("/listarProduto")
-        })
-            .catch((err) => console.log(err))
-
-    }
+        navigate("/listarProduto");
+      })
+      .catch((err) => console.log(err));
+  };
 
     return (
         <div className="cadastrarUsuario" style={{
@@ -118,40 +133,52 @@ export function CadastrarProduto() {
                         </select>
                     </div>
                     <div className="mb-3">
-
-                        <div className="custom-file">
-                            <input type="file" multiple onChange={handleImageChange} className="file" id="customFile" />
-                            <div htmlFor="customFile" className="file-label">
-                                <label>Escolha o arquivo...</label>
-                                <label htmlFor="customFile" className="label-button">Navegar</label>
-                            </div>
-                        </div>
-
-                        <div className="mt-4 mb-3">
-                            {images.map((image, index) => (
-                                <div key={index} className="image-container">
-                                    <img src={URL.createObjectURL(image)} alt={`Imagem ${index}`} />
-                                    <button onClick={() => handleRemoveImage(index)} className="remove-button">Remover</button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="div-botoes">
-                        <div className="divBtnCadastrar">
-                            <button type="button" onClick={() => {
-                                navigate("/listarProduto")
-                            }} className="btnEditarCadastro">cancelar</button>
-                        </div>
-                        <div className="divBtnCadastrar">
-                            <button type="submit" disabled={loading} className="btn btn-dark" style={{ width: "100% !important" }}>
-                                {loading ? 'Enviando...' : 'Enviar'}
-                            </button>
-                        </div>
-                    </div>
-
-                </form>
-
+            <label htmlFor="customFile" className="form-label">
+              Imagens do Produto
+            </label>
+            <div className="custom-file">
+              <input type="file" multiple onChange={handleImageChange} className="file" id="customFile" />
+              <label htmlFor="customFile" className="label-button">
+                Navegar
+              </label>
             </div>
-        </div >
-    )
+            <div className="mt-4 mb-3">
+              {images.map((image, index) => (
+                <div key={index} className="image-container">
+                  <img src={URL.createObjectURL(image.file)} alt={`Imagem ${index}`} />
+                  <div className="mb-3">
+                    <label htmlFor={`principal${index}`} className="form-label">
+                      Imagem Principal
+                    </label>
+                    <input
+                      type="checkbox"
+                      id={`principal${index}`}
+                      checked={image.principal}
+                      onChange={() => handleSetPrincipal(index)}
+                    />
+                  </div>
+                  <button onClick={() => handleRemoveImage(index)} className="remove-button">
+                    Remover
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Botões de ação */}
+          <div className="div-botoes">
+            <div className="divBtnCadastrar">
+              <button type="button" onClick={() => navigate("/listarProduto")} className="btnEditarCadastro">
+                Cancelar
+              </button>
+            </div>
+            <div className="divBtnCadastrar">
+              <button type="submit" disabled={loading} className="btn btn-dark" style={{ width: "100% !important" }}>
+                {loading ? "Enviando..." : "Enviar"}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
