@@ -1,4 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { BsCart } from "react-icons/bs";
+import  logo from "../../asset/logo.png"
 
 
 export function NavBar() {
@@ -6,9 +8,10 @@ export function NavBar() {
         <nav className="navbar navbar-expand-lg navbar-light bg-light" style={{
             display: "flex", flexDirection: "row",
             alignItems: "center", justifyContent: "space-between",
-            padding:"10px 20px"
+            padding:"10px 20px",
+            backgroundColor:"blue !important"
         }}>
-            <a className="navbar-brand" href="#">Navbar</a>
+            <a className="navbar-brand" href="#"><img src={logo} alt="" width="150px"  /></a>
 
 
             <div id="navbarSupportedContent">
@@ -21,7 +24,7 @@ export function NavBar() {
                         </li>
 
                         <li className="nav-item">
-                            <a className="nav-link" href="#">carrinho</a>
+                            <div className="nav-link" href="#"><BsCart/></div>
                         </li>
 
                     </div>
