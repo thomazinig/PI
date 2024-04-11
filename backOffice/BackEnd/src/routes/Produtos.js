@@ -99,8 +99,6 @@ router.get("/listarProdutosImagens", async (req, res) => {
 
 
 
-
-
 router.get("/listarProdutos", async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1; // Página atual, padrão é 1
