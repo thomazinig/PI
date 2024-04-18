@@ -1,33 +1,42 @@
 const { DataTypes } = require("sequelize");
 const { connection } = require("./db");
+const Clientes = require("./cliente");
 
-const Clientes = connection.define("cliente", {
-  nome: {
+const enderecosEntrega = connection.define("enderecosEntrega", {
+  endereco: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  cpf:{
+  cep:{
     type:DataTypes.STRING,
     allowNull:false,
     unique: true
   },
-  email: {
+  bairro: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
-  senha: {
+  uf: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  idade: {
+  numero: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  genero: {
+  complemento: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  cidade: {
     type: DataTypes.STRING,
     allowNull: false,
   }
 });
+enderecosEntrega.belongsTo(Clientes,{
+    constraints:true,
+})
+Clientes.hasMany(enderecosEntrega)
 
-module.exports = Clientes;
+module.exports = enderecosEntrega;

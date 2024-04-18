@@ -5,6 +5,7 @@ const express = require("express");
 const rotasUsuarios = require("./routes/Usuarios");
 const rotasProdutos = require("./routes/Produtos")
 const rotasImagemProdutos = require("./routes/Produtos")
+const rotasCliente = require("./routes/cliente")
 
 
 const app = express();
@@ -21,6 +22,7 @@ app.use('/images', express.static(diretorioImagens));
 app.use(rotasUsuarios)
 app.use(rotasProdutos)
 app.use(rotasImagemProdutos)
+app.use(rotasCliente)
 
 
 try {

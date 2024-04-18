@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs');
 const ImagemProduto = require("../database/imagemProdutos");
 const Produtos = require("../database/produtos");
-const { Sequelize } = require("sequelize");
 
 const router = Router();
 
