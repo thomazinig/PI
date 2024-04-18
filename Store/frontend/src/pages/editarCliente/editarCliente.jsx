@@ -1,30 +1,44 @@
-
-import { useEffect, useState } from "react";
-import "./signUp.css"
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from "react-router-dom";
 
-export function SignUp() {
-    const navigate = useNavigate();
 
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm();
-
-    const [cep, setCep] = useState()
-    const [endereco, setEndereco] = useState()
-    const [bairro, setBairro] = useState()
-    const [uf, setUf] = useState()
+export function EditarCliente() {
+    const { id } = useParams();
+    const { register, handleSubmit, setValue, watch, errors } = useForm(); // Adicione 'watch' e 'errors' aqui
+    const [usuario, setUsuario] = useState(null);
+    const [cep, setCep] = useState('');
+    const [endereco, setEndereco] = useState('');
+    const [bairro, setBairro] = useState('');
+    const [cidade, setCidade] = useState('');
     const [numero, setNumero] = useState()
-    const [cidade, setCidade] = useState()
-    useEffect(() => {
-        register("enderecoCobrancaData.cep"); // Registrar o campo cep
-    }, [register]);
 
+    const [uf, setUf] = useState('');
+
+    useEffect(() => {
+        const fetchUsuario = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/cliente/${id}`);
+                setUsuario(response.data);
+                setValue("nome", response.data.nome);
+                setValue("cpf", response.data.cpf);
+                setValue("email", response.data.email);
+                setValue("genero", response.data.genero);
+                setValue("idade", response.data.idade);
+            } catch (error) {
+                console.error('Erro ao buscar usuário:', error);
+            }
+        };
+
+        fetchUsuario();
+    }, [id, setValue]);
+
+    const onSubmit = async (data) => { 
+        console.log("teste")
+        axios.put(`http://localhost:3001/editarCliente/${id}`, data).then(()=>console.log("top"))
+        .catch((error)=>console.log(error))
+    };
 
     function checarCep() {
         axios.get(`https://viacep.com.br/ws/${cep}/json/`).then((res) => {
@@ -37,20 +51,10 @@ export function SignUp() {
             register("enderecoCobrancaData.cep").setValue(data.cep); // Definir o valor do campo cep
         }).catch(error => console.log(error))
     }
-    const onSubmit = async (data) => {
-        delete data.confirmar_senha;
 
-        try {
-            axios.post('http://localhost:3001/novoCliente', data).then(res => {
-                navigate("/")
-            }).catch(() => {
-                alert("erro ao cadastrar usuario")
-            })
-
-        } catch (error) {
-            console.error('Erro ao enviar os dados:', error);
-        }
-    };
+    if (!usuario) {
+        return <div>Carregando...</div>;
+    }
 
     return (
         <div>
@@ -59,7 +63,7 @@ export function SignUp() {
                 <div className="shape"></div>
             </div>
             <form className="FormSignUp" onSubmit={handleSubmit(onSubmit)}>
-                <h3>Cadastre-se</h3>
+                <h3>Editar Usuário</h3>
                 <div className="divCadastro">
                     <div className="divCampoCadastro">
                         <label className="labelLogin" htmlFor="nomeCompleto">Nome Completo</label>
@@ -75,7 +79,6 @@ export function SignUp() {
                     </div>
                 </div>
                 <div className="divCadastro">
-
                     <div className="divCampoCadastro">
                         <label className="labelLogin" htmlFor="email">E-mail</label>
                         <input className="inputSignUp" type="text" placeholder="E-mail" id="Email" {...register("email", { required: true })} />
@@ -86,29 +89,24 @@ export function SignUp() {
                     </div>
                 </div>
                 <div className="divCadastro">
-
                     <div className="divCampoCadastro">
-
                         <label htmlFor="exampleInputPassword1" className="labelLogin">Senha</label>
-                        <input type="password" className="inputSignUp" id="exampleInputPassword1"{...register("senha", { required: true })} />
-                        {errors.senha && <span>senha obrigatorio</span>}
-
+                        <input type="password" className="inputSignUp" id="exampleInputPassword1" {...register("senha", { required: true })} />
+                        {errors && errors.senha && <span>senha obrigatorio</span>}
                     </div>
-
                     <div className="divCampoCadastro">
-
                         <label htmlFor="exampleInputPassword1" className="labelLogin">Confirmar senha</label>
                         <input className="inputSignUp" type="password"
                             {...register("confirmar_senha", {
                                 required: true,
                                 validate: (val) => {
-                                    if (watch('senha') != val) {
+                                    if (watch('senha') !== val) {
                                         return "senhas diferentes";
                                     }
                                 },
                             })}
                         />
-                        {errors.confirmar_senha && <span>senhas diferentes</span>}
+                        {errors && errors.confirmar_senha && <span>senhas diferentes</span>}
                     </div>
                 </div>
                 <h3 style={{ marginTop: "30px" }}>Endereço faturamento</h3>
@@ -124,11 +122,7 @@ export function SignUp() {
                             onChange={(e) => setCep(e.target.value)}
                             onBlur={checarCep} // Adicione onBlur para verificar o CEP após o usuário sair do campo
                         />
-
-                        <button className="buscarCep" type="button" onClick={() => {
-                            checarCep()
-                            console.log(cep)
-                        }}>buscar</button>
+                        <button className="buscarCep" type="button" onClick={checarCep}>Buscar</button>
                     </div>
                     <div className="divCampoCadastro">
                         <label className="labelLogin" htmlFor="Endereco">Endereco</label>
@@ -139,23 +133,18 @@ export function SignUp() {
                             id="endereco"
                             value={endereco}
                             onChange={(e) => setEndereco(e.target.value)}
-                            {...register("enderecoCobrancaData.endereco", { required: true })} // Mantenha o registro do campo endereço
+                            {...register("enderecoCobrancaData.endereco", { required: true })}
                         />
                     </div>
                     <div className="divCampoCadastro">
                         <label className="labelLogin" htmlFor="Numero">Numero</label>
-                        <input className="inputSignUp" type="text" placeholder="Numero" id="Numero"
-                            {...register("enderecoCobrancaData.numero", { required: true })}
-                        />
-
+                        <input className="inputSignUp" type="text" placeholder="Numero" id="Numero" {...register("enderecoCobrancaData.numero", { required: true })} />
                     </div>
                 </div>
                 <div className="divCadastro">
                     <div className="divCampoCadastro">
-                        <label className="labelLogin" htmlFor="complemento">complemento</label>
-                        <input className="inputSignUp" type="text" placeholder="complemento" id="complemento"
-                            {...register("enderecoCobrancaData.complemento", { required: true })}
-                        />
+                        <label className="labelLogin" htmlFor="complemento">Complemento</label>
+                        <input className="inputSignUp" type="text" placeholder="Complemento" id="complemento" {...register("enderecoCobrancaData.complemento", { required: true })} />
                     </div>
                     <div className="divCampoCadastro">
                         <label className="labelLogin" htmlFor="Bairro">Bairro</label>
@@ -166,9 +155,8 @@ export function SignUp() {
                             id="bairro"
                             value={bairro}
                             onChange={(e) => setBairro(e.target.value)}
-                            {...register("enderecoCobrancaData.bairro", { required: true })} // Mantenha o registro do campo bairro
+                            {...register("enderecoCobrancaData.bairro", { required: true })}
                         />
-
                     </div>
                     <div className="divCampoCadastro">
                         <label className="labelLogin" htmlFor="Cidade">Cidade</label>
@@ -179,9 +167,8 @@ export function SignUp() {
                             id="cidade"
                             value={cidade}
                             onChange={(e) => setCidade(e.target.value)}
-                            {...register("enderecoCobrancaData.cidade", { required: true })} // Mantenha o registro do campo cidade
+                            {...register("enderecoCobrancaData.cidade", { required: true })}
                         />
-
                     </div>
                     <div className="divCampoCadastro">
                         <label className="labelLogin" htmlFor="UF">UF</label>
@@ -192,15 +179,12 @@ export function SignUp() {
                             id="uf"
                             value={uf}
                             onChange={(e) => setUf(e.target.value)}
-                            {...register("enderecoCobrancaData.uf", { required: true })} // Mantenha o registro do campo UF
+                            {...register("enderecoCobrancaData.uf", { required: true })}
                         />
-
                     </div>
                 </div>
-
-                <button className="buttonLoginStore">Cadastro</button>
-
+                <button className="buttonLoginStore" type="submit" >Editar</button>
             </form>
         </div>
-    )
+    );
 }
