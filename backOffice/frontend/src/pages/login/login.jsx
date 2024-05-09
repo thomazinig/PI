@@ -16,7 +16,6 @@ export function Login() {
 
     if (localStorage.token) {
       authToken(localStorage.token)
-      console.log("teste")
     }
   }, [])
   function authToken(token) {
@@ -50,7 +49,6 @@ export function Login() {
       .post("http://localhost:3001/login", data)
       .then((res) => {
         const { idUser, grupUser } = res.data;
-        console.log(res.data.grupUser);
         localStorage.token = res.data.token
         setUserData({ idUser,grupUser });
         navigate("/segundaTela", {

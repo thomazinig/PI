@@ -1,13 +1,12 @@
-
 import { useEffect, useState } from "react";
-import "./signUp.css"
+import "../signUp/signUp.css"
 import axios from "axios";
 import { useForm } from 'react-hook-form';
 import { useNavigate } from "react-router-dom";
 
-export function SignUp() {
+export function AdicionarEndereco() {
     const navigate = useNavigate();
-
+    const id = localStorage.id;
     const {
         register,
         handleSubmit,
@@ -22,27 +21,33 @@ export function SignUp() {
     const [numero, setNumero] = useState()
     const [cidade, setCidade] = useState()
     useEffect(() => {
-        register("enderecoCobrancaData.cep"); // Registrar o campo cep
+        register("cep"); // Registrar o campo cep
     }, [register]);
 
 
     function checarCep() {
         axios.get(`https://viacep.com.br/ws/${cep}/json/`).then((res) => {
             const data = res.data;
+            console.log(data.cep)
             setEndereco(data.logradouro);
             setBairro(data.bairro);
             setUf(data.uf);
             setNumero('');
             setCidade(data.localidade);
-            register("enderecoCobrancaData.cep").setValue(data.cep); // Definir o valor do campo cep
+            register("cep").setValue(data.cep);
         }).catch(error => console.log(error))
     }
     const onSubmit = async (data) => {
-        delete data.confirmar_senha;
+        delete data.cep;
+        data.cep = cep;
+        console.log(data);
+
         try {
-            axios.post('http://localhost:3001/novoCliente', data).then(res => {
-                navigate("/login")
+            axios.post(`http://localhost:3001/cadastrarEnederecoEntrega/${id}`, data).then(res => {
+                alert("endereço cadastrado")
+                navigate("/listarEnderecoEntrega")
             }).catch((error) => {
+                console.log(error)
                 alert(error.response.data.menssage)
             })
 
@@ -58,59 +63,8 @@ export function SignUp() {
                 <div className="shape"></div>
             </div>
             <form className="FormSignUp" onSubmit={handleSubmit(onSubmit)}>
-                <h3>Cadastre-se</h3>
-                <div className="divCadastro">
-                    <div className="divCampoCadastro">
-                        <label className="labelLogin" htmlFor="nomeCompleto">Nome Completo</label>
-                        <input className="inputSignUp" type="text" placeholder="Nome Completo" id="nomeCompleto" {...register("nome", { required: true })} />
-                    </div>
-                    <div className="divCampoCadastro">
-                        <label className="labelLogin" htmlFor="idade">Idade</label>
-                        <input className="inputSignUp" type="text" placeholder="Idade" id="idade"{...register("idade", { required: true })} />
-                    </div>
-                    <div className="divCampoCadastro">
-                        <label className="labelLogin" htmlFor="genero">Genero</label>
-                        <input className="inputSignUp" type="text" placeholder="Genero" id="genero" {...register("genero", { required: true })} />
-                    </div>
-                </div>
-                <div className="divCadastro">
 
-                    <div className="divCampoCadastro">
-                        <label className="labelLogin" htmlFor="email">E-mail</label>
-                        <input className="inputSignUp" type="text" placeholder="E-mail" id="Email" {...register("email", { required: true })} />
-                    </div>
-                    <div className="divCampoCadastro">
-                        <label className="labelLogin" htmlFor="cpf">CPF</label>
-                        <input className="inputSignUp" type="text" placeholder="cpf" id="cpf" {...register("cpf", { required: true })} />
-                    </div>
-                </div>
-                <div className="divCadastro">
-
-                    <div className="divCampoCadastro">
-
-                        <label htmlFor="exampleInputPassword1" className="labelLogin">Senha</label>
-                        <input type="password" className="inputSignUp" id="exampleInputPassword1"{...register("senha", { required: true })} />
-                        {errors.senha && <span>senha obrigatorio</span>}
-
-                    </div>
-
-                    <div className="divCampoCadastro">
-
-                        <label htmlFor="exampleInputPassword1" className="labelLogin">Confirmar senha</label>
-                        <input className="inputSignUp" type="password"
-                            {...register("confirmar_senha", {
-                                required: true,
-                                validate: (val) => {
-                                    if (watch('senha') != val) {
-                                        return "senhas diferentes";
-                                    }
-                                },
-                            })}
-                        />
-                        {errors.confirmar_senha && <span>senhas diferentes</span>}
-                    </div>
-                </div>
-                <h3 style={{ marginTop: "30px" }}>Endereço faturamento</h3>
+                <h3 style={{ marginTop: "30px" }}>Endereço Entrega</h3>
                 <div className="divCadastro">
                     <div className="divCampoCadastro">
                         <label className="labelLogin" htmlFor="cep" type="text">CEP</label>
@@ -121,9 +75,7 @@ export function SignUp() {
                             id="cep"
                             value={cep}
                             onChange={(e) => setCep(e.target.value)}
-                            onBlur={checarCep} 
-                            {...register("enderecoCobrancaData.cep", { required: true })} // Mantenha o registro do campo endereço
-                            // Adicione onBlur para verificar o CEP após o usuário sair do campo
+                            onBlur={checarCep}
                         />
 
                         <button className="buscarCep" type="button" onClick={() => {
@@ -140,13 +92,13 @@ export function SignUp() {
                             id="endereco"
                             value={endereco}
                             onChange={(e) => setEndereco(e.target.value)}
-                            {...register("enderecoCobrancaData.endereco", { required: true })} // Mantenha o registro do campo endereço
+                            {...register("endereco", { required: true })} // Mantenha o registro do campo endereço
                         />
                     </div>
                     <div className="divCampoCadastro">
                         <label className="labelLogin" htmlFor="Numero">Numero</label>
                         <input className="inputSignUp" type="text" placeholder="Numero" id="Numero"
-                            {...register("enderecoCobrancaData.numero", { required: true })}
+                            {...register("numero", { required: true })}
                         />
 
                     </div>
@@ -155,7 +107,7 @@ export function SignUp() {
                     <div className="divCampoCadastro">
                         <label className="labelLogin" htmlFor="complemento">complemento</label>
                         <input className="inputSignUp" type="text" placeholder="complemento" id="complemento"
-                            {...register("enderecoCobrancaData.complemento", { required: true })}
+                            {...register("complemento", { required: true })}
                         />
                     </div>
                     <div className="divCampoCadastro">
@@ -167,7 +119,7 @@ export function SignUp() {
                             id="bairro"
                             value={bairro}
                             onChange={(e) => setBairro(e.target.value)}
-                            {...register("enderecoCobrancaData.bairro", { required: true })} // Mantenha o registro do campo bairro
+                            {...register("bairro", { required: true })} // Mantenha o registro do campo bairro
                         />
 
                     </div>
@@ -180,7 +132,7 @@ export function SignUp() {
                             id="cidade"
                             value={cidade}
                             onChange={(e) => setCidade(e.target.value)}
-                            {...register("enderecoCobrancaData.cidade", { required: true })} // Mantenha o registro do campo cidade
+                            {...register("cidade", { required: true })} // Mantenha o registro do campo cidade
                         />
 
                     </div>
@@ -193,7 +145,7 @@ export function SignUp() {
                             id="uf"
                             value={uf}
                             onChange={(e) => setUf(e.target.value)}
-                            {...register("enderecoCobrancaData.uf", { required: true })} // Mantenha o registro do campo UF
+                            {...register("uf", { required: true })} // Mantenha o registro do campo UF
                         />
 
                     </div>

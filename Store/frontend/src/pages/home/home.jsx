@@ -47,7 +47,6 @@ export function Home() {
     console.log(produtos)
     return (
         <>
-            <NavBar />
             <div className="container">
                 <div style={{
                     display: "flex",

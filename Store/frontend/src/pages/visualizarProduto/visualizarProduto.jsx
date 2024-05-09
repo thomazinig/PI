@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -7,6 +7,8 @@ import 'swiper/css/pagination';
 import './styles.css';
 import { EffectCube, Pagination } from 'swiper/modules';
 import { useParams } from 'react-router-dom';
+import { NavBar } from '../navBar/navBar';
+import AppContext from '../../context/AppContext';
 
 
 export function VisualizarProduto() {
@@ -15,6 +17,12 @@ export function VisualizarProduto() {
     const [produto, setProduto] = useState(null);
     const [caminhosImagens, setCaminhosImagens] = useState([]);
     const [caminhoImagemPrincipal, setCaminhoImagemPrincipal] = useState(null);
+    const { carrinho, setCarrinho, cartItems,setCartItems, } = useContext(AppContext)
+
+    const adicionarAoCarrinho = (produto) => {
+        setCarrinho([...carrinho, produto]);
+        setCartItems([...cartItems,produto])
+    };
     const fetchImagensPrincipal = async () => {
         try {
             const response = await axios.get(`http://localhost:3001/download/principal/${id}`); // Substitua 'id' pelo ID do produto desejado
@@ -114,6 +122,19 @@ export function VisualizarProduto() {
                                 <li className='mb-5'>Valor: {produto.preco}</li>
                                 <li>
                                     <button className='btnEditarCadastro'>comprar</button>
+                                </li>
+                                <li style={{ marginTop: "10px" }}>
+                                    <button className='btn btn-danger' onClick={() => {
+                                        adicionarAoCarrinho(produto)
+                                        return (
+                                            <NavBar data={carrinho} />
+
+                                        )
+                                    }}>
+                                        Adicionar ao Carrinho
+                                    </button>
+
+
                                 </li>
                             </ul>
 

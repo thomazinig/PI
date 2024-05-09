@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const Clientes = require("../database/cliente");
 const router = Router();
+const jwt = require("jsonwebtoken");
+
 const bcrypt = require("bcrypt");
 const enderecoCobranca = require("../database/enderecoCobranca");
 
@@ -22,7 +24,7 @@ router.get("/cliente/:id", async (req, res) => {
 });
 
 router.post("/novoCliente", async (req, res) => {
-    const { nome, cpf, idade, genero, senha, email, enderecoCobrancaData  } = req.body;
+    const { nome, cpf, idade, genero, senha, email, enderecoCobrancaData } = req.body;
     const salt = await bcrypt.genSalt(12);
     const passwordHash = await bcrypt.hash(senha, salt);
     const validarEmail = await Clientes.findOne({ where: { email: email } })
@@ -47,7 +49,7 @@ router.post("/novoCliente", async (req, res) => {
             genero,
             email
         });
-    
+
         // Crie o endereço de cobrança associado ao cliente criado
         const novoEnderecoCobranca = await enderecoCobranca.create({
             endereco: enderecoCobrancaData.endereco,
@@ -59,12 +61,12 @@ router.post("/novoCliente", async (req, res) => {
             cidade: enderecoCobrancaData.cidade,
             clienteId: novoCliente.id // Associa o endereço ao cliente criado
         });
-    console.log("aaa")
         res.send(novoCliente);
     } catch (error) {
+
         res.status(400).send({ message: "Erro ao cadastrar cliente" })
     }
-    
+
 
 })
 router.post("/loginStore", async (req, res) => {
@@ -86,9 +88,20 @@ router.post("/loginStore", async (req, res) => {
         if (!senhaValida) {
             return res.status(400).json({ message: "Credenciais inválidas" });
         }
+        const secret = process.env.SECRET;
+
+        const token = jwt.sign(
+            {
+                id: cliente.id,
+            },
+            secret,
+            { expiresIn: 6000 }
+        );
+        const idUser = cliente.id
 
         // Se as credenciais estiverem corretas, retorne o cliente
-        res.json(cliente);
+        res.status(200).json({ message: "Autenticação realizada com sucesso!", token, idUser});
+
     } catch (error) {
         console.error('Erro ao realizar login:', error);
         res.status(500).json({ message: "Erro interno do servidor" });

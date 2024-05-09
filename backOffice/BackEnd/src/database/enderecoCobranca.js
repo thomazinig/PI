@@ -10,12 +10,10 @@ const enderecoCobranca = connection.define("enderecosCobranca", {
   cep:{
     type:DataTypes.STRING,
     allowNull:false,
-    unique: true
   },
   bairro: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   uf: {
     type: DataTypes.STRING,

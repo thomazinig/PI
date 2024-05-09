@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import "./login.css";
 import { useNavigate } from 'react-router-dom';
@@ -9,17 +9,53 @@ export function Login() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
 
+    useEffect(() => {
+        if (localStorage.token) {
+            authToken(localStorage.token)
+
+        }
+    }, [])
+
+    function authToken(token) {
+        if (token) {
+            axios.get("http://localhost:3001/authToken", {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+
+            }).then((res => {
+                console.log(res)
+                navigate("/")
+            })).catch((err => {
+                console.log(err)
+                localStorage.clear();
+                navigate("/login")
+
+            }))
+
+        }
+    }
+
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        
-          axios.post('http://localhost:3001/login', {
-                email: email,
-                senha: senha
-            }).then(()=> navigate("/")).catch(()=>alert("usuario ou senha invalidas"))
 
-          
-       
+        axios.post('http://localhost:3001/loginStore', {
+            email: email,
+            senha: senha
+        }).then((res) => {
+            const { idUser, token } = res.data;
+            localStorage.token = token
+            localStorage.id = idUser
+            navigate("/")
+
+
+        }).catch(() => {
+            alert("usuario ou senha invalidas")
+        })
+
+
+
     };
 
     return (
@@ -40,8 +76,8 @@ export function Login() {
                 <button className="buttonLoginStore" type="submit">Log In</button>
 
                 <div className="social">
-                    <div className="go" onClick={()=> navigate("/cadastro")}><i className="fab fa-google"></i> cadstre-se</div>
-                    
+                    <div className="go" onClick={() => navigate("/cadastro")}><i className="fab fa-google"></i> cadstre-se</div>
+
                 </div>
             </form>
         </div>
