@@ -13,6 +13,7 @@ export function Profile() {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
 
             <a href="" onClick={() => navigate(`/editarCliente/${id}`)}>Editar Cadastro</a>
+            <a href="/listarEnderecoEntrega">Meus Pedidos</a>
             <a href="/listarEnderecoEntrega">Adiconar endereço de Entrega</a>
             <a href="" onClick={()=>{sair()}}>Sair</a>
         </div>

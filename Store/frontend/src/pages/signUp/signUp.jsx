@@ -21,12 +21,10 @@ export function SignUp() {
     const [uf, setUf] = useState()
     const [numero, setNumero] = useState()
     const [cidade, setCidade] = useState()
-    useEffect(() => {
-        register("enderecoCobrancaData.cep"); // Registrar o campo cep
-    }, [register]);
-
+    
 
     function checarCep() {
+        console.log(cep)
         axios.get(`https://viacep.com.br/ws/${cep}/json/`).then((res) => {
             const data = res.data;
             setEndereco(data.logradouro);
@@ -65,8 +63,8 @@ export function SignUp() {
                         <input className="inputSignUp" type="text" placeholder="Nome Completo" id="nomeCompleto" {...register("nome", { required: true })} />
                     </div>
                     <div className="divCampoCadastro">
-                        <label className="labelLogin" htmlFor="idade">Idade</label>
-                        <input className="inputSignUp" type="text" placeholder="Idade" id="idade"{...register("idade", { required: true })} />
+                        <label className="labelLogin" htmlFor="idade">Data de Nascimento</label>
+                        <input className="inputSignUp" type="date" placeholder="Idade" id="idade"{...register("idade", { required: true })} />
                     </div>
                     <div className="divCampoCadastro">
                         <label className="labelLogin" htmlFor="genero">Genero</label>
@@ -119,9 +117,11 @@ export function SignUp() {
                             type="text"
                             placeholder="CEP"
                             id="cep"
-                            value={cep}
+                            defaultValue={cep}
                             onChange={(e) => setCep(e.target.value)}
-                            onBlur={checarCep} 
+                            onBlur={(e) => {
+                                console.log(e)
+                            }} 
                             {...register("enderecoCobrancaData.cep", { required: true })} // Mantenha o registro do campo endereço
                             // Adicione onBlur para verificar o CEP após o usuário sair do campo
                         />
