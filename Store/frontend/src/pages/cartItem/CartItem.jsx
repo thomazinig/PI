@@ -12,11 +12,13 @@ function CartItem({ data }) {
   const { id, thumbnail, nomeProduto, preco } = data;
   const [qtoItens, setQtoItens] = useState(1)
  
+  var localProduto = {id:id,quantidade:qtoItens}
+  localStorage.setItem(`${nomeProduto}`, JSON.stringify(localProduto) )
+
   const handleRemoveItem = () => {
     const updatedItems = cartItems.filter((item) => item.id != id);
     setCartItems(updatedItems);
-  };
-
+  }; 
   return (
     <section className="cart-item">
       <img

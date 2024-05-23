@@ -8,6 +8,8 @@ function Cart() {
   const { cartItems, isCartVisible } = useContext(AppContext);
   const [cep, setCep] = useState(false)
   const [teste, setTeste] = useState(false)
+  localStorage.setItem(`frete`, 20)
+
   return (
     <section className={`cart ${isCartVisible ? 'cart--active' : ''}`}>
       <div className="cart-items">

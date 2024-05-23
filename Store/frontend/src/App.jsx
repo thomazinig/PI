@@ -11,6 +11,8 @@ import { AdicionarEndereco } from "./pages/enderecoEntrega/adicionarEndereco";
 import { EditarEndereco } from "./pages/enderecoEntrega/editarEndereco";
 import Provider from "./context/Provider";
 import Cart from "./pages/cart/cart";
+import { CheckoutEndereco } from "./pages/checkout/checkoutEndereco";
+import { AdicionarEnderecoCarrinho } from "./pages/enderecoEntrega/adicionarEnderecoCarrinho";
 
 function App() {
   return (
@@ -25,7 +27,9 @@ function App() {
             <Route path="/perfil" element={<Profile />} />
             <Route path="/listarEnderecoEntrega" element={<ListarEnderecoEntrega />} />
             <Route path="/adicionarEndereco" element={<AdicionarEndereco />} />
+            <Route path="/adicionarEnderecoCarrinho" element={<AdicionarEnderecoCarrinho />} />
             <Route path="/editarEndereco/:id" element={<EditarEndereco />} />
+            <Route path="/checkoutEndereco" element={<CheckoutEndereco />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<SignUp />} />

@@ -53,7 +53,7 @@ export function NavBar() {
 
                         {validar === true ?
                             <li className="nav-item">
-                                <a className="nav-link" href="/perfil"><CgProfile /></a>
+                                <a className="nav-link" href="/perfil"><CgProfile size={24} /></a>
                             </li>
                             :
                             <li className="nav-item">
@@ -62,7 +62,7 @@ export function NavBar() {
 
                         }
                         <li className="nav-item">
-                            <div className="nav-link" href="#"><CartButton/></div>
+                            <div className="nav-link" href="#"><CartButton size={24}/></div>
                         </li>
 
                     </div>
