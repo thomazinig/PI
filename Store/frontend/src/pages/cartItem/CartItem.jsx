@@ -4,21 +4,25 @@ import { BsCartDashFill } from 'react-icons/bs';
 
 import './CartItem.css';
 import AppContext from '../../context/AppContext';
+import axios from 'axios';
 
 function CartItem({ data }) {
 
-
-  const { cartItems, setCartItems,cartItemsComprar, setCartItemsComprar } = useContext(AppContext);
-  const { id, thumbnail, nomeProduto, preco } = data;
+  console.log(data);
+  const { cartItems, setCartItems, cartItemsComprar, setCartItemsComprar } = useContext(AppContext);
+  const { id, thumbnail, nomeProdutoPedido, precoProdutoPedido } = data;
   const [qtoItens, setQtoItens] = useState(1)
- 
-  var localProduto = {id:id,quantidade:qtoItens}
-  localStorage.setItem(`${nomeProduto}`, JSON.stringify(localProduto) )
+
+  var localProduto = { id: id, quantidade: qtoItens }
+  localStorage.setItem(`${nomeProdutoPedido}`, id)
+  localStorage.setItem(`${nomeProdutoPedido}Qtd`, qtoItens)
+  localStorage.setItem(`${nomeProdutoPedido}Valor`, precoProdutoPedido)
 
   const handleRemoveItem = () => {
-    const updatedItems = cartItems.filter((item) => item.id != id);
-    setCartItems(updatedItems);
-  }; 
+    axios.delete(`http://localhost:3001/deletarPedido/${id}`).then(
+      window.location.reload()
+    )
+  };
   return (
     <section className="cart-item">
       <img
@@ -27,8 +31,8 @@ function CartItem({ data }) {
       />
 
       <div className="cart-item-content">
-        <h3 className="cart-item-title">{nomeProduto}</h3>
-        <h3 className="cart-item-price">{preco}</h3>
+        <h3 className="cart-item-title">{nomeProdutoPedido}</h3>
+        <h3 className="cart-item-price">{precoProdutoPedido}</h3>
         <div style={{ display: "flex", flexDirection: 'row', alignItems: 'center', justifyContent: "center" }}>
           <button className='btn' onClick={
             () => {
@@ -39,7 +43,9 @@ function CartItem({ data }) {
             }
           }>-</button>
           <h3 className="cart-item-title">{qtoItens}</h3>
-          <button className='btn' onClick={()=> setQtoItens(qtoItens+1)}>+</button>
+          <button className='btn' onClick={() => 
+            setQtoItens(qtoItens + 1)
+            }>+</button>
         </div>
 
         <button

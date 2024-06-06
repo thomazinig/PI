@@ -7,6 +7,7 @@ const rotasProdutos = require("./routes/Produtos")
 const rotasImagemProdutos = require("./routes/Produtos")
 const rotasCliente = require("./routes/cliente")
 const rotasEntrega = require("./routes/enderecoEntrega")
+const rotasPEdido = require("./routes/pedido")
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(rotasProdutos)
 app.use(rotasImagemProdutos)
 app.use(rotasCliente)
 app.use(rotasEntrega)
+app.use(rotasPEdido)
 
 
 try {

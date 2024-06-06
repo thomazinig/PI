@@ -13,6 +13,9 @@ import Provider from "./context/Provider";
 import Cart from "./pages/cart/cart";
 import { CheckoutEndereco } from "./pages/checkout/checkoutEndereco";
 import { AdicionarEnderecoCarrinho } from "./pages/enderecoEntrega/adicionarEnderecoCarrinho";
+import { CheckoutPagamento } from "./pages/checkout/checkoutPagamento";
+import { CheckoutFinal } from "./pages/checkout/checkoutFinal";
+import { MeusPedidos } from "./pages/checkout/meusPedidos";
 
 function App() {
   return (
@@ -30,6 +33,9 @@ function App() {
             <Route path="/adicionarEnderecoCarrinho" element={<AdicionarEnderecoCarrinho />} />
             <Route path="/editarEndereco/:id" element={<EditarEndereco />} />
             <Route path="/checkoutEndereco" element={<CheckoutEndereco />} />
+            <Route path="/checkoutPagamento" element={<CheckoutPagamento />} />
+            <Route path="/CheckoutFinal" element={<CheckoutFinal />} />
+            <Route path="/MeusPedidos" element={<MeusPedidos />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<SignUp />} />

@@ -13,6 +13,16 @@ router.get("/listarEndereco/:clienteId", async (req, res) => {
         res.status(400).send({ message: "Erro ao listar endereços" })
     }
 })
+router.get("/listarEnderecoUnico/:id", async (req, res) => {
+    const {id } = req.params;
+    try {
+        const enderecos = await enderecosEntrega.findOne({ where: { id } })
+
+        res.send(enderecos)
+    } catch (error) {
+        res.status(400).send({ message: "Erro ao listar endereços" })
+    }
+})
 router.post("/cadastrarEnederecoEntrega/:clienteId", async (req, res) => {
     const { clienteId } = req.params
     const { endereco, cep, bairro, uf, numero, complemento, cidade } = req.body

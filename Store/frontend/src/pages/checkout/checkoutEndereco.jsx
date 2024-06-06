@@ -5,6 +5,7 @@ export function CheckoutEndereco() {
     const [enderecos, setEnderecos] = useState()
     const [enderecoId, setEnderecoId] = useState()
     const id = localStorage.id
+    localStorage.idEndereco = enderecoId
     useEffect(() => {
         listarEnderecos()
     }, [])
@@ -35,7 +36,7 @@ export function CheckoutEndereco() {
                     <div>
 
                     <a href="/adicionarEnderecoCarrinho">adicionar Endereco</a>
-                    <button>proxima Etapa</button>
+                    <button><a href="/checkoutPagamento">proxima Etapa</a></button>
                     </div>
                 </div>
                 :

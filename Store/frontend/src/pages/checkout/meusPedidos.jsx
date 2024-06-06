@@ -1,9 +1,7 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom";
 
-export function CheckoutFinal() {
-    const navigate = useNavigate();
+export function MeusPedidos() {
     const [produtos, setProduto] = useState(null)
     const [endereco, setEndereco] = useState(null)
     function listarProduto() {
@@ -55,11 +53,7 @@ export function CheckoutFinal() {
                         <br />
                         <span>{localStorage.dadosCartao}</span>
                         <br />
-                        <button> <a href="/checkoutPagamento">voltar</a></button>
-                        <button onClick={() => {
-                            alert("compra concluida")
-                            navigate("/")
-                        }}> <a >concluir compra</a></button>
+                       
                     </div>
 
 
@@ -68,4 +62,5 @@ export function CheckoutFinal() {
             }
         </>
     )
+    
 }

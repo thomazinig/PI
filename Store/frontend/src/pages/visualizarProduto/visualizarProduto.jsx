@@ -20,8 +20,13 @@ export function VisualizarProduto() {
     const { carrinho, setCarrinho, cartItems,setCartItems, } = useContext(AppContext)
 
     const adicionarAoCarrinho = (produto) => {
-        setCarrinho([...carrinho, produto]);
-        setCartItems([...cartItems,produto])
+
+        const data ={
+            nomeProdutoPedido:produto.nomeProduto,
+            precoProdutoPedido: produto.preco
+        }
+       axios.post("http://localhost:3001/novoPedido", data).then(response => window.location.reload())
+       .catch((e)=> console.log(e))
     };
     const fetchImagensPrincipal = async () => {
         try {
